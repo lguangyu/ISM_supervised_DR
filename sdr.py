@@ -93,6 +93,7 @@ if __name__ == "__main__":
 	Xsmall = s.get_reduced_dim_data(X)
 
 	[out_allocation, nmi, svm_object] = use_svm(Xsmall, Y, k='rbf')
+	nmi = apply_svm(X_test, Y_test, svm_object)
 	print(nmi)
 
 	del s
