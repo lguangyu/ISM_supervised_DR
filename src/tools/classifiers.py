@@ -19,7 +19,7 @@ def use_svm(X,Y,k='rbf', K=None):
 
 
 def apply_svm(X,Y, svm_obj):
-	out_allocation = svm_object.predict(X)
+	out_allocation = svm_obj.predict(X)
 	nmi = normalized_mutual_info_score(out_allocation, Y)
 	return nmi
 

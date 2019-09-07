@@ -78,28 +78,36 @@ class sdr():
 	
 
 if __name__ == "__main__":
-	X = np.loadtxt('data/wine.csv', delimiter=',', dtype=np.float64)			
-	Y = np.loadtxt('data/wine_label.csv', delimiter=',', dtype=np.int32)			
-	X_test = np.loadtxt('data/wine_test.csv', delimiter=',', dtype=np.float64)			
-	Y_test = np.loadtxt('data/wine_label_test.csv', delimiter=',', dtype=np.int32)			
+	data_name = 'cancer'
+	X = np.loadtxt('data/' + data_name + '.csv', delimiter=',', dtype=np.float64)			
+	Y = np.loadtxt('data/' + data_name + '_label.csv', delimiter=',', dtype=np.int32)			
+	X_test = np.loadtxt('data/' + data_name + '_test.csv', delimiter=',', dtype=np.float64)			
+	Y_test = np.loadtxt('data/' + data_name + '_label_test.csv', delimiter=',', dtype=np.int32)			
 
 
 	X = preprocessing.scale(X)
+	X_test = preprocessing.scale(X_test)
 
 
-	s = sdr(X,Y)
+	s = sdr(X,Y,q=7)	#q if not set, it is automatically set to 80% of data variance by PCA
 	s.train()
 	W = s.get_projection_matrix()
 	Xsmall = s.get_reduced_dim_data(X)
 
-	[out_allocation, nmi, svm_object] = use_svm(Xsmall, Y, k='rbf')
-	nmi = apply_svm(X_test, Y_test, svm_object)
-	print(nmi)
+
+	[out_allocation, training_nmi_original, svm_object] = use_svm(X, Y, k='rbf')
+	print('Training NMI original Data: %.4f'%training_nmi_original)
+
+	[out_allocation, training_nmi, svm_object] = use_svm(Xsmall, Y, k='rbf')
+	test_nmi = apply_svm(X_test.dot(W), Y_test, svm_object)
+
+	print('Input dimension : %d x %d'%(X.shape[0],X.shape[1]))
+	print('Output dimension : %d x %d'%(Xsmall.shape[0],Xsmall.shape[1]))
+	print('Initial HSIC : %.4f'%s.db['init_HSIC'])
+	print('Final HSIC : %.4f'%s.db['final_HSIC'])
+	print('Training NMI : %.4f'%training_nmi)
+	print('Test NMI : %.4f'%test_nmi)
+
 
 	del s
-	
-
-	#db = {}
-	#fin = open(sys.argv[1],'r')
-	#cmds = fin.readlines()
 

@@ -20,11 +20,6 @@ def Y_2_allocation(Y):
 
 
 def Allocation_2_Y(allocation):
-#	onehot_encoder = OneHotEncoder()
-#	Y = onehot_encoder.fit_transform(allocation)
-#	return Y
-
-
 	N = np.size(allocation)
 	unique_elements = np.unique(allocation)
 	num_of_classes = len(unique_elements)
@@ -219,19 +214,14 @@ def normalize_U(U):
 	return normalize(U, norm='l2', axis=1)
 
 
-def rank_by_variance(X, q, var_percentage = 0.9):
+def rank_by_variance(X, q, var_percentage= 0.8):
 	if q is not None: return q
 
 	[U,Σ,V] = np.linalg.svd(X, full_matrices=False)
 	rank_sorted = np.cumsum(Σ)/np.sum(Σ)
-	rank = np.sum(rank_sorted < 0.99) + 1
+	
+	rank = np.sum(rank_sorted < var_percentage) + 1
 	return rank
-
-#	M = U.dot(np.diag(Σ)).dot(V)
-#	print(M[0:10,:])
-#	print(X[0:10,:])
-#	import pdb; pdb.set_trace()
-#	return 2
 
 
 def eig_solver(L, k, mode='smallest'):
