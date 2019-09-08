@@ -2,7 +2,7 @@
 
 import numpy as np
 import sklearn.metrics
-import kernel_lib as klib
+from ..tools import kernel_lib as klib
 
 
 class gaussian():
