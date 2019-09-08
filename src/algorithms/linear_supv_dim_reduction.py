@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from algorithm import *
-import kernel_lib as klib
+from .algorithm import *
+from ..tools import kernel_lib as klib
 
 #import sys
 #import debug

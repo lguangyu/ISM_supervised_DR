@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import numpy as np
-import kernel_lib as klib
+from ..tools import kernel_lib as klib
 #from terminal_print import *
 
 
