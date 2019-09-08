@@ -12,11 +12,23 @@ import itertools
 import socket
 from sklearn import preprocessing
 
-from src.kernels.gaussian import *
-from src.optimizer.ism import *
-from src.algorithms.linear_supv_dim_reduction import *
-from src.tools.kernel_lib import *
-from src.tools.classifiers import *
+# importing library components
+# this should suffice use of this script both as a main module or be imported as
+# a package.
+# tho, ideally this class definition should be done inside the module, not here
+if __name__ == "__main__":
+	from src.kernels.gaussian import *
+	from src.optimizer.ism import *
+	from src.algorithms.linear_supv_dim_reduction import *
+	from src.tools.kernel_lib import *
+	from src.tools.classifiers import *
+else:
+	from .src.kernels.gaussian import *
+	from .src.optimizer.ism import *
+	from .src.algorithms.linear_supv_dim_reduction import *
+	from .src.tools.kernel_lib import *
+	from .src.tools.classifiers import *
+	
 
 np.set_printoptions(precision=4)
 np.set_printoptions(threshold=sys.maxsize)
