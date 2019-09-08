@@ -78,7 +78,7 @@ class sdr():
 	
 
 if __name__ == "__main__":
-	data_name = 'cancer'
+	data_name = 'wine'
 	X = np.loadtxt('data/' + data_name + '.csv', delimiter=',', dtype=np.float64)			
 	Y = np.loadtxt('data/' + data_name + '_label.csv', delimiter=',', dtype=np.int32)			
 	X_test = np.loadtxt('data/' + data_name + '_test.csv', delimiter=',', dtype=np.float64)			
@@ -95,18 +95,15 @@ if __name__ == "__main__":
 	Xsmall = s.get_reduced_dim_data(X)
 
 
-	[out_allocation, training_nmi_original, svm_object] = use_svm(X, Y, k='rbf')
-	print('Training NMI original Data: %.4f'%training_nmi_original)
-
-	[out_allocation, training_nmi, svm_object] = use_svm(Xsmall, Y, k='rbf')
-	test_nmi = apply_svm(X_test.dot(W), Y_test, svm_object)
+	[out_allocation, training_acc, svm_object] = use_svm(Xsmall, Y, k='rbf')
+	test_acc = apply_svm(X_test.dot(W), Y_test, svm_object)
 
 	print('Input dimension : %d x %d'%(X.shape[0],X.shape[1]))
 	print('Output dimension : %d x %d'%(Xsmall.shape[0],Xsmall.shape[1]))
 	print('Initial HSIC : %.4f'%s.db['init_HSIC'])
 	print('Final HSIC : %.4f'%s.db['final_HSIC'])
-	print('Training NMI : %.4f'%training_nmi)
-	print('Test NMI : %.4f'%test_nmi)
+	print('Training Accuracy : %.4f'%training_acc)
+	print('Test Accuracy : %.4f'%test_acc)
 
 
 	del s
