@@ -17,13 +17,19 @@ from sklearn import preprocessing
 # a package.
 # tho, ideally this class definition should be done inside the module, not here
 if __name__ == "__main__":
+	from src.kernels.linear import *
 	from src.kernels.gaussian import *
+	from src.kernels.polynomial import *
+	from src.kernels.squared import *
 	from src.optimizer.ism import *
 	from src.algorithms.linear_supv_dim_reduction import *
 	from src.tools.kernel_lib import *
 	from src.tools.classifiers import *
 else:
+	from .src.kernels.linear import *
 	from .src.kernels.gaussian import *
+	from .src.kernels.polynomial import *
+	from .src.kernels.squared import *
 	from .src.optimizer.ism import *
 	from .src.algorithms.linear_supv_dim_reduction import *
 	from .src.tools.kernel_lib import *
@@ -51,7 +57,7 @@ class sdr():
 		#	adjustable variables
 		self.db['convergence_method'] = 'use_eigen_values'	# use_eigen_values is faster but gradient might not = 0 and use_W is slower but more accurate with gradient = 0
 		self.db['algorithm'] = linear_supv_dim_reduction(self.db)
-		self.db['kernel'] = gaussian(self.db)
+		self.db['kernel'] = linear(self.db)				# try : gaussian, polynomial, squared, linear
 		self.db['optimizer'] = ism(self.db)
 
 
@@ -84,7 +90,7 @@ class sdr():
 	
 
 if __name__ == "__main__":
-	data_name = 'wine'
+	data_name = 'cancer'
 	X = np.loadtxt('data/' + data_name + '.csv', delimiter=',', dtype=np.float64)			
 	Y = np.loadtxt('data/' + data_name + '_label.csv', delimiter=',', dtype=np.int32)			
 	X_test = np.loadtxt('data/' + data_name + '_test.csv', delimiter=',', dtype=np.float64)			
@@ -100,16 +106,17 @@ if __name__ == "__main__":
 	W = s.get_projection_matrix()
 	Xsmall = s.get_reduced_dim_data(X)
 
-
 	[out_allocation, training_acc, svm_object] = use_svm(Xsmall, Y, k='rbf')
 	test_acc = apply_svm(X_test.dot(W), Y_test, svm_object)
 
-	print('Input dimension : %d x %d'%(X.shape[0],X.shape[1]))
-	print('Output dimension : %d x %d'%(Xsmall.shape[0],Xsmall.shape[1]))
-	print('Initial HSIC : %.4f'%s.db['init_HSIC'])
-	print('Final HSIC : %.4f'%s.db['final_HSIC'])
-	print('Training Accuracy : %.4f'%training_acc)
-	print('Test Accuracy : %.4f'%test_acc)
+	print('Using : %s '%type(s.db['kernel']).__name__)
+	print('\tDataset : %s'%(data_name))
+	print('\tInput dimension : %d x %d'%(X.shape[0],X.shape[1]))
+	print('\tOutput dimension : %d x %d'%(Xsmall.shape[0],Xsmall.shape[1]))
+	print('\tInitial HSIC : %.4f'%s.db['init_HSIC'])
+	print('\tFinal HSIC : %.4f'%s.db['final_HSIC'])
+	print('\tTraining Accuracy : %.4f'%training_acc)
+	print('\tTest Accuracy : %.4f'%test_acc)
 
 
 	del s

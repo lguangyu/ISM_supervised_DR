@@ -25,7 +25,7 @@ class linear_supv_dim_reduction(algorithm):
 	def initialize_W(self):
 		db = self.db
 		db['init_HSIC'] = self.compute_HSIC(np.eye(db['d']))
-
+	
 		Φ0 = self.db['kernel'].get_Φ0()
 		[db['W'], eigs] = klib.eig_solver(Φ0, db['q'])
 
@@ -45,9 +45,9 @@ class linear_supv_dim_reduction(algorithm):
 
 	def compute_HSIC(self, W):
 		db = self.db
-		Kx = klib.rbk_sklearn(db['X'].dot(W), db['kernel'].σ)
+
+		Kx = db['kernel'].get_kernel_matrix(W)
 		HSIC_val = np.sum(db['Γ']*Kx)
-		#print('HSIC : %.4f'%HSIC_val)
 		return HSIC_val
 
 	def compute_gradient(self, W, Λ, Φ=None):
