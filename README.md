@@ -48,4 +48,4 @@ and
 
 ## Acknowledgments
 
-We would like to acknowledge support for this project from the NSF grant IIS-1546428.
+We would like to acknowledge support for this project from the NSF grant IIS-1546428. We would also like to thank Zulqarnain Khan for his insightful discussions.
