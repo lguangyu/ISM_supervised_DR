@@ -43,7 +43,7 @@ np.set_printoptions(suppress=True)
 
 
 class sdr():
-	def __init__(self, X, Y, q=None):	#	X=data, Y=label, q=reduced dimension
+	def __init__(self, X, Y, q=None, var_percentage=0.9):	#	X=data, Y=label, q=reduced dimension
 		#	automated variables
 		self.db = {}
 		self.db['X'] = X
@@ -51,7 +51,7 @@ class sdr():
 		self.db['N'] = N = X.shape[0]
 		self.db['d'] = d = X.shape[1]
 		self.db['H'] = np.eye(N) - (1.0/N)*np.ones((N, N))
-		self.db['q'] = rank_by_variance(X, q)	#if q is not set, then we keep 99% of variance
+		self.db['q'] = rank_by_variance(X, q, var_percentage)	#if q is not set, then we keep 99% of variance
 		self.db['c'] = self.db['Y'].shape[1]	#c is the number of classes
 
 		#	adjustable variables
