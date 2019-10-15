@@ -4,7 +4,7 @@ import sklearn.metrics
 import autograd.numpy as np
 import torch
 import sys
-#from format_conversion import *
+from sklearn.kernel_approximation import RBFSampler
 from sklearn.preprocessing import normalize			# version : 0.17
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import OneHotEncoder
@@ -135,8 +135,15 @@ def mkl_kernel(db):
 	return K
 
 
-def rbk_sklearn(data, sigma):
-	gammaV = 1.0/(2*sigma*sigma)
+def rbk_RFF(X, σ, ɲ=1000):
+	γ = 1.0/(2*σ*σ)
+	rff = RBFSampler(gamma=γ, n_components=ɲ, random_state=None)
+	Φₓ = rff.fit_transform(X)
+	Ƙ = Φₓ.dot(Φₓ.T)
+	return Ƙ
+
+def rbk_sklearn(data, σ):
+	gammaV = 1.0/(2*σ*σ)
 	rbk = sklearn.metrics.pairwise.rbf_kernel(data, gamma=gammaV)
 	np.fill_diagonal(rbk, 0)			#	Set diagonal of adjacency matrix to 0
 	return rbk
@@ -147,30 +154,6 @@ def rbk_relative_σ(db, X, Y=None):	#This should take 2 values
 	K = np.exp(-(D*D*db['Σ'])/2.0)
 	np.fill_diagonal(K,0)
 	return K
-
-def get_RFF_embeding(db, X):
-	[HDKDH, AE_out, Ψx] = get_RFF_kernel(db, X)
-	L = HDKDH.data.numpy()
-
-	[U, U_normalized] = L_to_U(db, L)
-	return [U, U_normalized, L]
-
-def get_RFF_raw_kernel(db, Ψx):
-	K = db['RFF'].get_rbf(Ψx, db['data'].σ, output_torch=True, dtype=db['dataType'])
-	return K
-
-def get_RFF_kernel(db, X, network_name='knet'):
-	[AE_out, Ψx] = db[network_name]( X )
-	
-	K = db['RFF'].get_rbf(Ψx, db['data'].σ, output_torch=True, dtype=db['dataType'])
-	D = 1/torch.sqrt(torch.sum(K, dim=0))
-	D2 = torch.ger(D,D)
-	db['DD_inv'] = D2
-	K = K*D2
-
-	HDKDH = torch.mm(torch.mm(db['H'], K), db['H'])
-	return [HDKDH, AE_out, Ψx]
-	
 
 
 def Ku_kernel(labels):
@@ -228,8 +211,6 @@ def eig_solver(L, k, mode='smallest'):
 	#L = ensure_matrix_is_numpy(L)
 	eigenValues,eigenVectors = np.linalg.eigh(L)
 
-	#print(eigenValues < 0)
-	#import pdb; pdb.set_trace()
 
 	if mode == 'smallest':
 		U = eigenVectors[:, 0:k]

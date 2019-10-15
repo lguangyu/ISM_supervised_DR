@@ -21,7 +21,8 @@ class gaussian():
 		σ = self.σ
 		Γ = db['Γ']
 	
-		Kx = klib.rbk_sklearn(X.dot(W), self.σ)
+		#Kx = klib.rbk_sklearn(X.dot(W), self.σ)
+		Kx = klib.rbk_RFF(X.dot(W), self.σ)
 		return Kx
 
 	def get_Φ(self, W): # using the smallest eigenvalue 
@@ -31,7 +32,8 @@ class gaussian():
 		σ = self.σ
 		Γ = db['Γ']
 	
-		Kx = klib.rbk_sklearn(X.dot(W), σ)
+		#Kx = klib.rbk_sklearn(X.dot(W), σ)
+		Kx = klib.rbk_RFF(X.dot(W), σ)
 		Ψ=Γ*Kx
 		D_Ψ = klib.compute_Degree_matrix(Ψ)
 		Φ = X.T.dot(D_Ψ - Ψ).dot(X) 			#debug.compare_Φ(db, Φ, Ψ)	
