@@ -79,7 +79,9 @@ class sdr():
 			Alg.update_U()
 			if Alg.outer_converge(): break;
 
-		Alg.verify_result(start_time)
+		# the 'start_time' refers to the object in global namespace when run as
+		# __main__; cause problem when used as module
+		#Alg.verify_result(start_time)
 		
 	def get_projection_matrix(self):
 		return self.db['W']
